@@ -89,7 +89,53 @@ class MainWindow(QMainWindow):
 
 
 class EditDialog(QDialog):
-    pass
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Update Student Data")
+        self.setFixedWidth(300)
+        self.setFixedHeight(300)
+        # add the student name
+        layout = QVBoxLayout()
+        # Get student name from selected row
+        index = app_main.table.currentRow()
+        student_name = app_main.table.item(index, 1).text()
+        self.student_id = app_main.table.item(index, 0).text()
+        # Add student name widget
+        self.student_name = QLineEdit(student_name)
+        self.student_name.setPlaceholderText("Name")
+        layout.addWidget(self.student_name)
+        # add combo box of course
+        course_names = app_main.table.item(index, 2).text()
+        self.courses_name = QComboBox()
+        self.courses = ["Biology", "Math", "Astronomy", "Physics"]
+        self.courses_name.addItems(self.courses)
+        self.courses_name.setCurrentText(course_names)
+        layout.addWidget(self.courses_name)
+        # add the phone number
+        phone_number = app_main.table.item(index, 3).text()
+        self.phone_number = QLineEdit(phone_number)
+        self.phone_number.setPlaceholderText("Phone number")
+        layout.addWidget(self.phone_number)
+
+        # add submit button
+        button = QPushButton("update")
+        button.clicked.connect(self.update_student)
+        layout.addWidget(button)
+
+        self.setLayout(layout)
+
+    def update_student(self):
+        connection = sqlite3.connect("database.db")
+        cursor = connection.cursor()
+        cursor.execute("update students set name= ?,course=?,mobile= ? where id= ? ",
+                       (self.student_name.text(),
+                        self.courses_name.itemText(self.courses_name.currentIndex()),
+                        self.phone_number.text(),self.student_id))
+        connection.commit()
+        cursor.close()
+        connection.close()
+        #Refresh the table
+        app_main.load_data()
 
 
 class DeleteDialog(QDialog):
