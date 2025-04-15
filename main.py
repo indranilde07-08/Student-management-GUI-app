@@ -21,6 +21,7 @@ class MainWindow(QMainWindow):
 
         about_action = QAction("About", self)
         help_menu_item.addAction(about_action)
+        about_action.triggered.connect(self.about)
 
         search_student_action = QAction(QIcon("icons/icons/search.png"), "Search student", self)
         search_student_action.triggered.connect(self.insert_search)
@@ -87,7 +88,20 @@ class MainWindow(QMainWindow):
         self.dialog_search = SearchDialog()
         self.dialog_search.exec()
 
+    def about(self):
+        dialog = AboutDialog()
+        dialog.exec()
 
+class AboutDialog(QMessageBox):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Title")
+        content = """
+        This app was created manage student data all-so
+        you can delete,insert,update not only student data you 
+        can use for any other dataset manage 
+        """
+        self.setText(content)
 class EditDialog(QDialog):
     def __init__(self):
         super().__init__()
